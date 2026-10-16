@@ -417,23 +417,6 @@ export const FullScreenHero3D: React.FC = () => {
           ))}
         </motion.p>
 
-        {/* Call to action button to explore dashboard */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-8 pointer-events-auto flex items-center gap-4"
-        >
-          <button
-            onClick={() => {
-              document.querySelector('#academic-vitality-bento')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-800 shadow-md transition-all cursor-pointer flex items-center gap-2 btn-tactile"
-          >
-            <span>Explore Command Deck</span>
-            <span className="text-sm">↓</span>
-          </button>
-        </motion.div>
 
       </div>
 
