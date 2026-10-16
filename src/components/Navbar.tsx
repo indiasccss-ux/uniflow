@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme, THEMES } from '../context/ThemeContext';
 import { sound } from '../utils/audio';
 import { 
@@ -27,6 +27,25 @@ export const Navbar: React.FC<NavbarProps> = ({ variant = 'light' }) => {
   } = useTheme();
 
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+  const themeRef = useRef<HTMLDivElement>(null);
+
+  // Close colour dropdown when clicking anywhere outside
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
+      if (themeRef.current && !themeRef.current.contains(event.target as Node)) {
+        setThemeDropdownOpen(false);
+      }
+    };
+
+    if (themeDropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('touchstart', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [themeDropdownOpen]);
 
   return (
     <header 
@@ -150,7 +169,7 @@ export const Navbar: React.FC<NavbarProps> = ({ variant = 'light' }) => {
             </button>
 
             {/* Accent Theme Dropdown */}
-            <div className="relative">
+            <div ref={themeRef} className="relative">
               <button
                 onClick={() => {
                   sound.playClick();
