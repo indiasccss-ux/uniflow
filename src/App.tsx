@@ -77,7 +77,7 @@ const MainAppContent: React.FC = () => {
         className={
           activeTab === 'command'
             ? "flex-1 w-full relative z-10 p-0 m-0"
-            : "flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 relative z-10 min-h-[70vh]"
+            : "flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-24 pb-12 relative z-10 min-h-[70vh]"
         }
       >
         <AnimatePresence mode="wait">

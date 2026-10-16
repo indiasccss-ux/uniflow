@@ -93,8 +93,8 @@ export const FullScreenHero3D: React.FC = () => {
     scene.add(rimLight);
 
     const modelGroup = new THREE.Group();
-    // Offset model to the right side on laptop/desktop so text on left is crystal clear
-    modelGroup.position.set(width >= 1024 ? 1.65 : 0, 0, 0);
+    // Offset model to the right side on laptop/desktop so text on left is crystal clear with zero overlap
+    modelGroup.position.set(width >= 1024 ? 2.15 : 0, 0, 0);
     scene.add(modelGroup);
     modelGroupRef.current = modelGroup;
 
@@ -240,7 +240,7 @@ export const FullScreenHero3D: React.FC = () => {
       rendererRef.current.setSize(w, h);
 
       if (modelGroupRef.current) {
-        modelGroupRef.current.position.set(w >= 1024 ? 1.65 : 0, 0, 0);
+        modelGroupRef.current.position.set(w >= 1024 ? 2.15 : 0, 0, 0);
       }
     };
 
@@ -320,6 +320,28 @@ export const FullScreenHero3D: React.FC = () => {
     isDraggingRef.current = false;
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      isDraggingRef.current = true;
+      prevMousePosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDraggingRef.current || e.touches.length !== 1) return;
+    const deltaX = e.touches[0].clientX - prevMousePosRef.current.x;
+    const deltaY = e.touches[0].clientY - prevMousePosRef.current.y;
+
+    targetRotationRef.current.y += deltaX * 0.008;
+    targetRotationRef.current.x = Math.max(-0.6, Math.min(0.8, targetRotationRef.current.x + deltaY * 0.008));
+
+    prevMousePosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  };
+
+  const handleTouchEnd = () => {
+    isDraggingRef.current = false;
+  };
+
   return (
     <section 
       aria-label="Uniflow Hero Showcase"
@@ -332,7 +354,7 @@ export const FullScreenHero3D: React.FC = () => {
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `radial-gradient(circle at 72% 50%, rgba(6, 182, 212, 0.16) 0%, rgba(99, 102, 241, 0.10) 40%, rgba(248, 250, 252, 0) 75%)`,
+            background: `radial-gradient(circle at 75% 50%, rgba(6, 182, 212, 0.16) 0%, rgba(99, 102, 241, 0.10) 40%, rgba(248, 250, 252, 0) 75%)`,
           }}
         />
         <div className="absolute inset-0 cyber-grid pointer-events-none opacity-40" />
@@ -349,12 +371,15 @@ export const FullScreenHero3D: React.FC = () => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         className="absolute inset-0 z-10 cursor-grab active:cursor-grabbing select-none"
         title="3D Visual Pedagogy Studio • Faculty interactive models & top student showcase • Click and drag to orbit"
       />
 
-      {/* 4. Center-Left Editorial Headline & Subtitle */}
-      <div className="relative z-20 px-6 sm:px-12 lg:px-20 max-w-4xl pointer-events-none my-auto py-12">
+      {/* 4. Center-Left Editorial Headline & Subtitle (Positioned to the left with zero 3D collision) */}
+      <div className="relative z-20 px-6 sm:px-10 lg:pl-16 lg:pr-4 max-w-xl xl:max-w-2xl pointer-events-none my-auto py-12">
         
         {/* Main Headline: Just uniflow with luxury dynamic light theme gradient */}
         <motion.h1
@@ -379,7 +404,7 @@ export const FullScreenHero3D: React.FC = () => {
           variants={subtitleContainerVariants}
           initial="hidden"
           animate="visible"
-          className="text-base sm:text-lg lg:text-xl text-slate-600 mt-6 leading-relaxed font-normal max-w-2xl flex flex-wrap"
+          className="text-base sm:text-lg lg:text-xl text-slate-600 mt-6 leading-relaxed font-normal max-w-lg flex flex-wrap"
         >
           {SUBTITLE_WORDS.map((word, i) => (
             <motion.span
@@ -392,9 +417,27 @@ export const FullScreenHero3D: React.FC = () => {
           ))}
         </motion.p>
 
+        {/* Call to action button to explore dashboard */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-8 pointer-events-auto flex items-center gap-4"
+        >
+          <button
+            onClick={() => {
+              document.querySelector('#academic-vitality-bento')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider text-white bg-slate-900 hover:bg-slate-800 shadow-md transition-all cursor-pointer flex items-center gap-2 btn-tactile"
+          >
+            <span>Explore Command Deck</span>
+            <span className="text-sm">↓</span>
+          </button>
+        </motion.div>
+
       </div>
 
-      {/* Spacer to balance bottom area cleanly with no bar */}
+      {/* Spacer to balance bottom area cleanly */}
       <div className="relative z-20 h-8 pointer-events-none" />
 
     </section>
